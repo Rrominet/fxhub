@@ -1,0 +1,26 @@
+#!/bin/bash
+echo "Installing the server on this machine on local (localhost)..."
+
+sudo cp ./fxhub /usr/local/bin/fxhub
+sudo chmod +x /usr/local/bin/fxhub
+echo "all files needed copied."
+
+echo "creating user systemd dir..."
+mkdir -p ~/.config/systemd/user
+
+echo "installing the server in systemctl..."
+systemctl --user stop fxhub.service
+echo "service stopped"
+rm ~/.config/systemd/user/fxhub.service
+echo "service removed"
+cp ./fxhub.service ~/.config/systemd/user
+echo "service file copied"
+systemctl --user daemon-reload
+echo "service daemon reloaded"
+#systemctl enable fxhub.service
+#echo "Sound Player service enabled"
+systemctl --user enable fxhub.service
+systemctl --user start fxhub.service
+echo "service installed."
+
+echo "server is installed on the local machine. You need to listen to localhost:10001 to get it."

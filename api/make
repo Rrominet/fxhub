@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+from ml import build
+import sys
+
+fm = "/media/romain/Donnees/Programmation/cpp/frameworks"
+libs = "/media/romain/Donnees/Programmation/cpp/libs"
+for arg in sys.argv:
+    if "libs=" in arg:
+        libs = arg.split("=")[1]
+    elif "fm=" in arg or "cpp-utils=" in arg:
+        fm = arg.split("=")[1]
+includes = [
+    "./",
+    fm,
+    libs + "/json",
+    ]
+srcs = [
+        "./test.cpp",
+        ]
+
+b = build.create("fxhub_client-test", sys.argv)
+
+b.includes = includes
+b.addToSrcs(srcs)
+
+b.addToLibs([
+    "stdc++fs",
+    ])
+
+if not b.release : 
+    b.addToLibs([
+        fm + "/build/libmlapi.so",
+    ])
+else : 
+    b.addToLibs([
+        "mlapi",
+    ])
+
+if ("clean" in sys.argv or "clear" in sys.argv) :
+    b.clean()
+else :
+    b.build()
