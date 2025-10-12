@@ -28,7 +28,14 @@ namespace fxhub
             std::lock_guard<std::mutex> lk(clientWriteMtx());
             lg("Sending : " + cmd);
             lg("With data : " + data.dump(4));
-            res = client().sendAsHttp(data, "/" + cmd);
+            try
+            {
+                res = client().sendAsHttp(data, "/" + cmd);
+            }
+            catch(const std::exception& e)
+            {
+                lg("Error in fxhub sendind data to the server : " << e.what());
+            }
         }
         _r["sended"] = true;
         try
