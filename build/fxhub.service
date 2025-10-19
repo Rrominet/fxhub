@@ -4,7 +4,7 @@ Description=fxhub Server (10001)
 After=default.target
 
 [Service]
-ExecStart=/usr/local/bin/fxhub 10001
+ExecStart=/opt/fxhub/fxhub 10001
 Restart=always
 RestartSec=1s
 

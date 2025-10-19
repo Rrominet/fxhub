@@ -1,26 +1,37 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Installing the server on this machine on local (localhost)..."
+if [ -z "$SUDO_USER" ]; then
+    echo "Run this script with sudo, you dumbass"
+    exit 1
+fi
 
-sudo cp ./fxhub /usr/local/bin/fxhub
-sudo chmod +x /usr/local/bin/fxhub
+chmod +x ./pre-install.sh
+./pre-install.sh
+
+rm -v /usr/local/bin/fxhub
+
+mkdir -pv /opt/fxhub
+cp -v ./fxhub /opt/fxhub/fxhub
+cp -v ./version /opt/fxhub/version
+cp -v ./dependencies /opt/fxhub/dependencies
+
+chmod +x /opt/fxhub/fxhub
+
 echo "all files needed copied."
 
 echo "creating user systemd dir..."
-mkdir -p ~/.config/systemd/user
 
-echo "installing the server in systemctl..."
-systemctl --user stop fxhub.service
-echo "service stopped"
-rm ~/.config/systemd/user/fxhub.service
+ACTUAL_USER="$SUDO_USER"
+USER_ID=$(id -u "$ACTUAL_USER")
+
+mkdir -p "/home/$ACTUAL_USER/.config/systemd/user"
+
+rm "/home/$ACTUAL_USER/.config/systemd/user/fxhub.service"
 echo "service removed"
-cp ./fxhub.service ~/.config/systemd/user
+cp ./fxhub.service "/home/$ACTUAL_USER/.config/systemd/user/fxhub.service"
 echo "service file copied"
-systemctl --user daemon-reload
-echo "service daemon reloaded"
-#systemctl enable fxhub.service
-#echo "Sound Player service enabled"
-systemctl --user enable fxhub.service
-systemctl --user start fxhub.service
-echo "service installed."
+chmod 777 -R /opt/fxhub
 
-echo "server is installed on the local machine. You need to listen to localhost:10001 to get it."
+echo "fxhub installed. Configuring the server (systemctl) now."
+chmod +x ./post-install.sh
+./post-install.sh

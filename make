@@ -45,9 +45,9 @@ if not b.release :
         fm + "/build/libmlapi.so",
     ])
 else : 
-    b.addToLibs([
-        "mlapi",
-    ])
+    b.addProject([
+        "/opt/mlapi/lib",
+        ])
 
 if ("clean" in sys.argv or "clear" in sys.argv) :
     b.clean()
