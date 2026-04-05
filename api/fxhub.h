@@ -129,10 +129,10 @@ namespace fxhub
 
     inline void listen()
     {
-        auto online = [](const std::string& line)
+        auto online = [](const std::string& line) -> bool
         {
             if (line.substr(0, 5) != "data:")
-                return;
+                return true;
             json data;
             try
             {
@@ -142,10 +142,10 @@ namespace fxhub
             {
                 lg("Error parsing the line into a json : " + line);
                 lg(e.what());
-                return;
+                return true;
             }
             if (!data.contains("app-id") || !data.contains("type"))
-                return;
+                return true;
             std::string id = data["app-id"].get<std::string>() + "_" + data["type"].get<std::string>();
             std::function<void(json&)> callback;
             {
@@ -154,6 +154,7 @@ namespace fxhub
                     callback = listeners()[id];
             }
             callback(data);
+            return true;
         };
 
         //FIXME : Potential race condition here in the reading socket between classic responses and sse

@@ -103,7 +103,7 @@ void FxHub::onGetState(std::shared_ptr<JsonCommand> cmd)
 void FxHub::setEvents()
 {
     lg("FxHub::setEvents");
-    auto sse = [this](auto& s, auto& httpdata)
+    auto sse = [this](std::shared_ptr<tcp::socket> s, auto& httpdata)
     {
         _sseRunning = true;
         auto th_id = std::this_thread::get_id();
